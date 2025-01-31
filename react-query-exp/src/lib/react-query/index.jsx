@@ -7,28 +7,27 @@ import React, {
 } from "react";
 
 //query client
-function createQueryClient() {
+function createQueryClient(staleTime = 5 * 60 * 1000) {
 	const cache = new Map();
 	const subscribers = new Map();
 	return {
-		async fetchQuery(queryKey, queryFn) {
-			// fetch from cache
-			const queryId = JSON.stringify(queryKey);
+		async fetchQuery (queryKey, queryFn) {
+            const queryId = JSON.stringify(queryKey);
+            const cached = cache.get(queryId);
 
-			// Check the cache
-			if (cache.has(queryId)) {
-				return cache.get(queryId).data;
-			}
+            if (cached && Date.now() - cached.timestamp < staleTime) {
+                return cached.data;
+            }
 
-			// Fetch fresh data
-			try {
-				const data = await queryFn();
-				this.setQueryData(queryKey, data);
-				return data;
-			} catch (error) {
-				throw error;
-			}
-		},
+            try {
+                const data = await queryFn();
+                this.setQueryData(queryKey, data);
+                return data;
+            } catch (error) {
+                throw error;
+            }
+        },
+
 		setQueryData(queryKey, data) {
 			const queryId = JSON.stringify(queryKey);
 			cache.set(queryId, { data, timestamp: Date.now() });
@@ -45,13 +44,15 @@ function createQueryClient() {
 		},
 		subscribe(queryKey, callback) {
 			const queryId = JSON.stringify(queryKey);
-
 			if (!subscribers.has(queryId)) {
 				subscribers.set(queryId, []);
 			}
-			subscribers.get(queryId).push(callback);
+			const callbacks = subscribers.get(queryId);
+			if (!callbacks.includes(callback)) {
+				callbacks.push(callback);
+			}		
 		},
-		unsubsribe(queryKey, callback) {
+		unsubscribe(queryKey, callback) {
 			const queryId = JSON.stringify(queryKey);
 
 			if (subscribers.has(queryId)) {
@@ -87,41 +88,53 @@ function useQueryClient() {
 	return client;
 }
 
-function useQuery({ queryKey, queryFn,refetch, enabled }) {
-	const client = useQueryClient();
-	const [data, setData] = useState(() => client.getQueryData(queryKey));
-	const [isLoading, setIsLoading] = useState(!data);
-	const [error, setError] = useState(null);
+function useQuery({ queryKey, queryFn, enabled = true }) {
+    const client = useQueryClient();
+    const [data, setData] = useState(() => client.getQueryData(queryKey));
+    const [isLoading, setIsLoading] = useState(!data && enabled);
+    const [error, setError] = useState(null);
 
-	const fetchData = useCallback(async () => {
-		setIsLoading(true);
-		setError(null);
-		try {
-			const freshData = await client.fetchQuery(queryKey, queryFn);
-			setData(freshData);
-		} catch (error) {
-			setError(true);
-		} finally {
-			setIsLoading(false);
-		}
-	}, [client, queryKey, queryFn]);
+    const fetchData = useCallback(async () => {
+        if (!enabled) return; // Prevent fetching when disabled
 
-	useEffect(() => {
-		const updateData = (updateData) => {
-			setData(updateData);
-		};
-		client.subscribe(queryKey, updateData);
-		fetchData();
-		return () => {
-			client.unsubsribe(queryKey,updateData);
-		};
-	}, [client, queryKey, fetchData]);
+        setIsLoading(true);
+        setError(null);
+        try {
+            const freshData = await client.fetchQuery(queryKey, queryFn);
+            setData(freshData);
+        } catch (error) {
+            setError(error);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [client, queryKey, queryFn, enabled]);
 
-	return {
-		data,
-		isLoading,
-		error,
-	};
+    useEffect(() => {
+        if (!enabled) return;
+
+        const updateData = (newData) => {
+            setData(newData);
+        };
+
+        client.subscribe(queryKey, updateData);
+
+        if (!data) {
+            fetchData();
+        }
+
+        return () => {
+            client.unsubscribe(queryKey, updateData);
+        };
+    }, [client, queryKey, fetchData, enabled]);
+
+    return {
+        data,
+        isLoading,
+        error,
+        refetch: fetchData, // Allow manual refetching
+    };
 }
+
+
 
 export { createQueryClient, QueryClientProvider, useQueryClient, useQuery };
