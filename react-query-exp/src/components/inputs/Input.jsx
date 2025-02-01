@@ -1,9 +1,10 @@
+import React from "react";
 import InputFactory from "./InputFactory";
 
 /**
  * A generic input component that renders an input of the specified type.
  *
- * @param {{ type: string, name: string, label: string, placeholder?: string, register: function, errors?: object }} props
+ * @param {{ type: () => JSX.Element, name: string, label: string, placeholder?: string, register: function, errors?: object }} props
  * @returns {JSX.Element}
  *
  * **/

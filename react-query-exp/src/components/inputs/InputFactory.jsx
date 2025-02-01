@@ -1,24 +1,30 @@
+import React from "react";
 import { TextInput, PasswordInput, FileInput, CheckboxInput } from "./index";
 
+
+const InputTypes = {
+	TEXT: TextInput,
+	PASSWORD: PasswordInput,
+	FILE: FileInput,
+	CHECKBOX: CheckboxInput,
+}
+
+
 /**
- * A factory component that returns an input component based on the specified type.
+ * A factory component that selects and renders a select input component
+ * based on the specified type.
  *
- * @param {string} type The type of input component to render ('text', 'password', 'file', 'checkbox').
- * @param {object} props Additional props to be passed to the input component.
- * @returns {JSX.Element} The corresponding input component for the given type.
+ * @param {Object} props - The component props.
+ * @param {(() => JSX.Element)} props.type - The type of select input component to render or a custom component.
+ * @returns {JSX.Element} The selected select input component.
  */
-
 const InputFactory = ({ type, ...props }) => {
-	const inputTypes = {
-		text: TextInput,
-		password: PasswordInput,
-		file: FileInput,
-		checkbox: CheckboxInput,
-	};
-
-	const InputComponent = inputTypes[type] || TextInput;
+	// Use the component or fallback to SyncSelectInput
+	const InputComponent = type || TextInput;
+	// @ts-ignore
 	return <InputComponent {...props} />;
 };
 
+export {InputTypes}
 export default InputFactory;
 

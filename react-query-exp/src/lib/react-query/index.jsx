@@ -95,15 +95,17 @@ function useQuery({ queryKey, queryFn, enabled = true }) {
     const [error, setError] = useState(null);
 
     const fetchData = useCallback(async () => {
-        if (!enabled) return; // Prevent fetching when disabled
+        if (!enabled) return; 
 
         setIsLoading(true);
         setError(null);
         try {
             const freshData = await client.fetchQuery(queryKey, queryFn);
             setData(freshData);
+			return freshData
         } catch (error) {
             setError(error);
+			return null
         } finally {
             setIsLoading(false);
         }
@@ -131,10 +133,10 @@ function useQuery({ queryKey, queryFn, enabled = true }) {
         data,
         isLoading,
         error,
-        refetch: fetchData, // Allow manual refetching
+        refetch: fetchData,
     };
 }
 
 
-
-export { createQueryClient, QueryClientProvider, useQueryClient, useQuery };
+export default createQueryClient;
+export { QueryClientProvider, useQueryClient, useQuery };

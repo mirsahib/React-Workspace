@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "baseUrl": "src",
+        "paths": {
+            "@components/*": ["components/*"],
+            "@constants/*": ["constant/*"],
+            "@context/*": ["context/*"],
+            "@utils/*": ["utils/*"],
+            "@assets/*": ["assets/*"],
+            "@theme/*": ["theme/*"],
+            "@context": ["context/*"],
+            "@hooks/*": ["hooks/*"],
+            "@shared/*": ["shared/*"],
+            "@schemas/*": ["schemas/*"],
+            "@module/*":["module/*"],
+            "@config/*":["config/*"]
+        },        
+        "checkJs": true,
+        "jsx": "react"
+
+    }
+}

@@ -1,22 +1,22 @@
-import { memo } from "react";
+import React from 'react';
+
 
 /**
  * A form text input with a label.
- *
- * @param {string} name The input name.
- * @param {string} label The label text.
- * @param {string} [placeholder] The placeholder text.
- * @param {import('react-hook-form').UseFormRegister} [register] The React Hook Form register method.
- * @param {import('react-hook-form').RegisterOptions} [validation] The React Hook Form validation rules.
- * @param {boolean} [disabled] Whether the input is disabled.
- * @param {string} [containerClass] The container class name.
+ * @param {Object} props
+ * @param {string} props.name - The input name.
+ * @param {string} props.label - The label text.
+ * @param {string} props.placeholder - The placeholder text.
+ * @param {(name: string) => import('react-hook-form').UseFormRegisterReturn} props.register - The React Hook Form register method.
+ * @param {boolean} props.disabled - Whether the input is disabled.
+ * @param {string} props.containerClass - The container class name.
  */
+
 const TextInput = ({
 	name,
 	label,
 	placeholder,
 	register,
-	validation,
 	disabled,
 	containerClass,
 }) => {
@@ -33,7 +33,7 @@ const TextInput = ({
 				name={name}
 				type="text"
 				placeholder={placeholder}
-				{...(register && register(name, validation))}
+				{...(register && register(name))}
 				disabled={disabled}
 				className="w-full py-2 px-4 rounded border focus:outline-none focus:ring-1 focus:ring-base_color"
 			/>
@@ -41,4 +41,4 @@ const TextInput = ({
 	);
 };
 
-export default memo(TextInput);
+export default TextInput;
