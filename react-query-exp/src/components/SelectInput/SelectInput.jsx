@@ -9,7 +9,6 @@ import SelectInputFactory from "./SelectInputFactory";
  *
  * **/
 const SelectInput = (props) => {
-	console.log("🚀 ~ SelectInput ~ props:", props.errors)
 	return (
 		<div className="w-full">
 			<SelectInputFactory {...props} />

@@ -16,7 +16,10 @@ const userProfile = {
 const loginSchema = Yup.object().shape({
 	email: Yup.string().email("Invalid email").required("Email is required"),
 	username: Yup.string().required("Username is required"),
-	fullName: Yup.string().required("Full name is required"),
+	fullName: Yup.object().shape({
+		value: Yup.string(),
+		label: Yup.string(),
+	}).nullable().required("Full name is required"),
 });
 
 const fetchProfile = async () => {
@@ -42,7 +45,6 @@ const fetchOptions = async (inputValue) => {
 
 export default function AuthForm() {
 	const [inputValue, setInputValue] = React.useState("");
-	// const [selectedName, setSelectedName] = React.useState(null);
 	const queryClient = useQueryClient();
 
 	const { data, isLoading, error } = useQuery({
@@ -95,10 +97,10 @@ export default function AuthForm() {
 						<SelectInput
 							type={SelectType.ASYNC_SELECT}
 							name="fullName"
+							label="Full Name"
 							placeholder="Select role"
 							register={register}
 							errors={errors}
-							// onChangeItem={(e) => setSelectedName(e)}
 							defaultOptions={profileOptions}
 							loadOptions={loadOptions}
 						/>
