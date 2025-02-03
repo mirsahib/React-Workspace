@@ -4,11 +4,12 @@ import SelectInputFactory from "./SelectInputFactory";
 /**
  * A generic select input component that renders a select input of the specified type.
  *
- * @param {{ type: () => JSX.Element, name: string, label?: string, placeholder?: string, register: function,onChangeItem:function,onChangeInput?:function,defaultOptions?:any	,loadOptions: function,options?: object, errors?: object }} props
+ * @param {{ type: () => JSX.Element, name: string, label?: string, placeholder?: string, register: function,onChangeItem?:function,onChangeInput?:function,defaultOptions?:any	,loadOptions: function,options?: object, errors?: object }} props
  * @returns {JSX.Element}
  *
  * **/
 const SelectInput = (props) => {
+	console.log("🚀 ~ SelectInput ~ props:", props.errors)
 	return (
 		<div className="w-full">
 			<SelectInputFactory {...props} />

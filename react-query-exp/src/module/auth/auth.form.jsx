@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React from "react";
 import * as Yup from "yup";
 import Input from "../../components/inputs/Input";
 import { useQuery, useQueryClient } from "../../lib/react-query";
@@ -16,6 +16,7 @@ const userProfile = {
 const loginSchema = Yup.object().shape({
 	email: Yup.string().email("Invalid email").required("Email is required"),
 	username: Yup.string().required("Username is required"),
+	fullName: Yup.string().required("Full name is required"),
 });
 
 const fetchProfile = async () => {
@@ -41,6 +42,7 @@ const fetchOptions = async (inputValue) => {
 
 export default function AuthForm() {
 	const [inputValue, setInputValue] = React.useState("");
+	// const [selectedName, setSelectedName] = React.useState(null);
 	const queryClient = useQueryClient();
 
 	const { data, isLoading, error } = useQuery({
@@ -73,7 +75,7 @@ export default function AuthForm() {
 
 	return (
 		<FormWrapper defaultValues={data} schema={loginSchema}>
-			{({ register, handleSubmit, formState: { errors } }) => (
+			{({ register, handleSubmit, formState: { errors }, }) => (
 				<form onSubmit={handleSubmit(onSubmit)} action="">
 					<div className="flex flex-col gap-4">
 						<Input
@@ -92,11 +94,11 @@ export default function AuthForm() {
 						/>
 						<SelectInput
 							type={SelectType.ASYNC_SELECT}
-							name="role"
+							name="fullName"
 							placeholder="Select role"
 							register={register}
 							errors={errors}
-							onChangeItem={(e) => console.log(e)}
+							// onChangeItem={(e) => setSelectedName(e)}
 							defaultOptions={profileOptions}
 							loadOptions={loadOptions}
 						/>
