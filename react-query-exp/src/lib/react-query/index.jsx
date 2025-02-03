@@ -77,6 +77,7 @@ const QueryClientProvider = ({ client, children }) => {
 	);
 };
 
+
 function useQueryClient() {
 	const client = useContext(QueryClientContext);
 	if (!client) {

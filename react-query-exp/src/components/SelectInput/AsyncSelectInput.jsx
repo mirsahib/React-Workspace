@@ -9,6 +9,8 @@ const AsyncSelectInput = ({
 	value,
 	onChangeItem,
 	onChangeInput,
+	defaultOptions,
+	cacheOptions=true,
 	containerClass,
 	isDisabled = false,
 	isSearchable = true,
@@ -22,14 +24,13 @@ const AsyncSelectInput = ({
 			)}
 
 			<AsyncSelect
-				defaultOptions
+				defaultOptions={defaultOptions}
+				cacheOptions={cacheOptions}
 				name={name}
 				placeholder={placeholder}
 				loadOptions={loadOptions}
-				value={value || null}
-				onChange={(selected) => {
-					onChangeItem(selected);
-				}}
+				value={null}
+				onChange={onChangeItem}
 				onInputChange={onChangeInput}
 				noOptionsMessage={({ inputValue }) =>
 					!inputValue ? "Type to search" : "No options found"
