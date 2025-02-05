@@ -10,8 +10,8 @@ function App() {
 
 	useEffect(() => {
     const updateCount = () => setCount(counterStore.getCount());
-    counterStore.subscribe(updateCount);
-		return () => counterStore.unsubscribe(updateCount);
+    counterStore.on('change',updateCount);
+		return () => counterStore.removeListener('change',updateCount);
 	}, []);
 
 	return (

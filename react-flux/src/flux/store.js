@@ -1,8 +1,28 @@
 import dispatcher from "./dispatcher";
  
 
-class CounterStore {
+class Emitter {
+
+    constructor(){
+        this.events = {}
+    }
+    on(eventName,callback){
+        this.events[eventName] = this.events[eventName] || []
+        this.events[eventName].push(callback)
+    }
+    emit(eventName){
+        this.events[eventName].forEach(callback => callback())
+    }
+    removeListener(eventName,callback){
+        this.events[eventName] = this.events[eventName].filter(cb => cb !== callback)
+    }
+
+}
+
+
+class CounterStore extends Emitter {
     constructor() {
+        super()
         this.count = parseInt(localStorage.getItem('count'),10) ||0;
         this.listener = []
     }
@@ -24,14 +44,8 @@ class CounterStore {
                 break;
         }
         localStorage.setItem('count',this.count)
-        this.listener.forEach(listener => listener())
-    }
-    subscribe(listener) {
-        this.listener.push(listener)
-    }
-    unsubscribe(listener) {
-        this.listener = this.listener.filter(l => l !== listener)
-    }
+        this.emit('change')
+    }    
 }
 
 const counterStore = new CounterStore();
